@@ -8,6 +8,7 @@ namespace esphome {
 namespace si1145_new {
 
 // Commands
+static const uint8_t SI1145_PARAM_QUERY = 0x80;
 static const uint8_t SI1145_PARAM_SET = 0xA0;
 static const uint8_t SI1145_NOP = 0x00;
 static const uint8_t SI1145_RESET = 0x01;
@@ -64,6 +65,7 @@ static const uint8_t SI1145_REG_ALSVISDATA0 = 0x22;
 static const uint8_t SI1145_REG_ALSIRDATA0 = 0x24;
 static const uint8_t SI1145_REG_UVINDEX0 = 0x2C;
 static const uint8_t SI1145_REG_PARAMRD = 0x2E;
+static const uint8_t SI1145_REG_CHIPSTAT = 0x30;
 
 static const uint8_t SI1145_REG_INTCFG_INTOE = 0x01;
 static const uint8_t SI1145_REG_IRQEN_ALSEVERYSAMPLE = 0x01;
@@ -87,6 +89,7 @@ class SI1145NewComponent : public PollingComponent, public i2c::I2CDevice {
   bool read8_(uint8_t reg, uint8_t &val);
   bool read16_(uint8_t reg, uint16_t &val);
   bool write_param_(uint8_t param, uint8_t value);
+  bool read_param_(uint8_t param, uint8_t &value);
 
   sensor::Sensor *visible_sensor_{nullptr};
   sensor::Sensor *infrared_sensor_{nullptr};

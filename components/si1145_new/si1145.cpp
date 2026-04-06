@@ -30,19 +30,43 @@ void SI1145NewComponent::update() {
   uint16_t vis = 0;
   uint16_t ir = 0;
   uint16_t uv_raw = 0;
+  uint16_t vis_forced = 0;
+  uint16_t ir_forced = 0;
+  uint16_t uv_forced = 0;
   uint8_t response = 0;
-
-  if (!this->write8_(SI1145_REG_COMMAND, SI1145_ALS_FORCE)) {
-    ESP_LOGW(TAG, "ALS_FORCE command failed");
-  }
-  delay(20);
+  uint8_t chipstat = 0;
+  uint8_t irqstat = 0;
 
   this->read8_(SI1145_REG_RESPONSE, response);
+  this->read8_(SI1145_REG_CHIPSTAT, chipstat);
+  this->read8_(SI1145_REG_IRQSTAT, irqstat);
   this->read16_(SI1145_REG_ALSVISDATA0, vis);
   this->read16_(SI1145_REG_ALSIRDATA0, ir);
   this->read16_(SI1145_REG_UVINDEX0, uv_raw);
 
-  ESP_LOGD(TAG, "raw response=0x%02X vis=%u ir=%u uv_raw=%u uv=%.2f", response, vis, ir, uv_raw, uv_raw / 100.0f);
+  // If frame looks dead, force one fresh ALS measurement and read again.
+  if (vis == 0 && ir == 0 && uv_raw == 0) {
+    if (!this->write8_(SI1145_REG_COMMAND, SI1145_ALS_FORCE)) {
+      ESP_LOGW(TAG, "ALS_FORCE command failed");
+    }
+    delay(25);
+    this->read16_(SI1145_REG_ALSVISDATA0, vis_forced);
+    this->read16_(SI1145_REG_ALSIRDATA0, ir_forced);
+    this->read16_(SI1145_REG_UVINDEX0, uv_forced);
+  }
+
+  // Clear IRQ bits by writing back what was read.
+  this->write8_(SI1145_REG_IRQSTAT, irqstat);
+
+  ESP_LOGD(TAG,
+           "raw resp=0x%02X chip=0x%02X irq=0x%02X vis=%u ir=%u uv=%u | forced vis=%u ir=%u uv=%u",
+           response, chipstat, irqstat, vis, ir, uv_raw, vis_forced, ir_forced, uv_forced);
+
+  if (vis == 0 && ir == 0 && uv_raw == 0 && (vis_forced || ir_forced || uv_forced)) {
+    vis = vis_forced;
+    ir = ir_forced;
+    uv_raw = uv_forced;
+  }
 
   if (this->visible_sensor_ != nullptr) {
     this->visible_sensor_->publish_state(static_cast<float>(vis));
@@ -89,6 +113,24 @@ bool SI1145NewComponent::begin_() {
 
   this->write8_(SI1145_REG_MEASRATE0, 0xFF);
   this->write8_(SI1145_REG_COMMAND, SI1145_ALS_AUTO);
+
+  uint8_t chlist = 0;
+  uint8_t vis_gain = 0;
+  uint8_t vis_misc = 0;
+  uint8_t ir_gain = 0;
+  uint8_t ir_misc = 0;
+  uint8_t chipstat = 0;
+  uint8_t response = 0;
+  this->read_param_(SI1145_PARAM_CHLIST, chlist);
+  this->read_param_(SI1145_PARAM_ALSVISADCGAIN, vis_gain);
+  this->read_param_(SI1145_PARAM_ALSVISADCMISC, vis_misc);
+  this->read_param_(SI1145_PARAM_ALSIRADCGAIN, ir_gain);
+  this->read_param_(SI1145_PARAM_ALSIRADCMISC, ir_misc);
+  this->read8_(SI1145_REG_CHIPSTAT, chipstat);
+  this->read8_(SI1145_REG_RESPONSE, response);
+  ESP_LOGI(TAG,
+           "init rb chlist=0x%02X vis_gain=0x%02X vis_misc=0x%02X ir_gain=0x%02X ir_misc=0x%02X chip=0x%02X resp=0x%02X",
+           chlist, vis_gain, vis_misc, ir_gain, ir_misc, chipstat, response);
 
   ESP_LOGI(TAG, "SI1145 init done");
   return true;
@@ -139,6 +181,13 @@ bool SI1145NewComponent::write_param_(uint8_t param, uint8_t value) {
   uint8_t readback = 0;
   const bool rb_ok = this->read8_(SI1145_REG_PARAMRD, readback);
   ESP_LOGD(TAG, "param write p=0x%02X v=0x%02X readback=0x%02X ok=%d", param, value, readback, (ok && rb_ok) ? 1 : 0);
+  return ok && rb_ok;
+}
+
+bool SI1145NewComponent::read_param_(uint8_t param, uint8_t &value) {
+  bool ok = this->write8_(SI1145_REG_COMMAND, param | SI1145_PARAM_QUERY);
+  bool rb_ok = this->read8_(SI1145_REG_PARAMRD, value);
+  ESP_LOGD(TAG, "param read p=0x%02X v=0x%02X ok=%d", param, value, (ok && rb_ok) ? 1 : 0);
   return ok && rb_ok;
 }
 
