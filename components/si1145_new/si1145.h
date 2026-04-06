@@ -76,6 +76,9 @@ class SI1145NewComponent : public PollingComponent, public i2c::I2CDevice {
   void set_visible_sensor(sensor::Sensor *visible_sensor) { visible_sensor_ = visible_sensor; }
   void set_infrared_sensor(sensor::Sensor *infrared_sensor) { infrared_sensor_ = infrared_sensor; }
   void set_uvindex_sensor(sensor::Sensor *uvindex_sensor) { uvindex_sensor_ = uvindex_sensor; }
+  void set_illuminance_sensor(sensor::Sensor *illuminance_sensor) { illuminance_sensor_ = illuminance_sensor; }
+  void set_visible_raw_sensor(sensor::Sensor *visible_raw_sensor) { visible_raw_sensor_ = visible_raw_sensor; }
+  void set_infrared_raw_sensor(sensor::Sensor *infrared_raw_sensor) { infrared_raw_sensor_ = infrared_raw_sensor; }
 
   void setup() override;
   void dump_config() override;
@@ -83,9 +86,12 @@ class SI1145NewComponent : public PollingComponent, public i2c::I2CDevice {
   void update() override;
 
  protected:
+  uint16_t read_visible_raw_();
+  uint16_t read_infrared_raw_();
   uint16_t read_visible_();
   uint16_t read_infrared_();
   float read_uvindex_();
+  float read_lux_(uint16_t visible, uint16_t infrared);
 
   bool begin_();
   void reset_();
@@ -98,6 +104,9 @@ class SI1145NewComponent : public PollingComponent, public i2c::I2CDevice {
   sensor::Sensor *visible_sensor_{nullptr};
   sensor::Sensor *infrared_sensor_{nullptr};
   sensor::Sensor *uvindex_sensor_{nullptr};
+  sensor::Sensor *illuminance_sensor_{nullptr};
+  sensor::Sensor *visible_raw_sensor_{nullptr};
+  sensor::Sensor *infrared_raw_sensor_{nullptr};
 };
 
 }  // namespace si1145_new
