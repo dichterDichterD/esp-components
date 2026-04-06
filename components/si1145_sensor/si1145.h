@@ -117,7 +117,6 @@ class SI1145SensorComponent : public PollingComponent, public i2c::I2CDevice {
 	void set_infrared_gain_(uint8_t gain);
 	void set_visible_range_(uint8_t range);
 	void set_infrared_range_(uint8_t range);
-	bool wait_for_part_id_(uint8_t expected, uint16_t max_attempts);
 
 	sensor::Sensor *visible_sensor_{nullptr};
 	sensor::Sensor *infrared_sensor_{nullptr};

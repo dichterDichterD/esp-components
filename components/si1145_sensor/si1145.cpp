@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "esphome/core/hal.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
@@ -262,13 +263,9 @@ void SI1145SensorComponent::reset_() {
 	this->write8_(SI1145_REG_IRQSTAT, 0xFF);
 
 	this->write8_(SI1145_REG_COMMAND, SI1145_RESET);
-	if (!this->wait_for_part_id_(0x45, 500)) {
-		ESP_LOGW(TAG, "Timeout waiting for SI1145 after reset command");
-	}
+	delay(10);
 	this->write8_(SI1145_REG_HWKEY, 0x17);
-	if (!this->wait_for_part_id_(0x45, 500)) {
-		ESP_LOGW(TAG, "Timeout waiting for SI1145 after HWKEY");
-	}
+	delay(10);
 }
 
 void SI1145SensorComponent::set_visible_gain_(uint8_t gain) { this->write_param_(SI1145_PARAM_ALSVISADCGAIN, gain); }
@@ -345,24 +342,15 @@ uint8_t SI1145SensorComponent::read8_(uint8_t reg) {
 }
 
 uint16_t SI1145SensorComponent::read16_(uint8_t reg) {
-	uint16_t d16 = 0;
-	this->read_byte_16(reg, &d16);
-	return (d16 >> 8) | ((d16 & 0xFF) << 8);
+	const uint8_t low = this->read8_(reg);
+	const uint8_t high = this->read8_(reg + 1);
+	return static_cast<uint16_t>(low) | (static_cast<uint16_t>(high) << 8);
 }
 
 uint8_t SI1145SensorComponent::write_param_(uint8_t p, uint8_t v) {
 	this->write8_(SI1145_REG_PARAMWR, v);
 	this->write8_(SI1145_REG_COMMAND, p | SI1145_PARAM_SET);
 	return this->read8_(SI1145_REG_PARAMRD);
-}
-
-bool SI1145SensorComponent::wait_for_part_id_(uint8_t expected, uint16_t max_attempts) {
-	for (uint16_t attempt = 0; attempt < max_attempts; attempt++) {
-		if (this->read8_(SI1145_REG_PARTID) == expected) {
-			return true;
-		}
-	}
-	return false;
 }
 
 }  // namespace si1145_sensor
