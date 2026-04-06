@@ -22,6 +22,7 @@ static const uint8_t SI1145_PARAM_CHLIST = 0x01;
 static const uint8_t SI1145_PARAM_CHLIST_ENUV = 0x80;
 static const uint8_t SI1145_PARAM_CHLIST_ENALSIR = 0x20;
 static const uint8_t SI1145_PARAM_CHLIST_ENALSVIS = 0x10;
+static const uint8_t SI1145_PARAM_CHLIST_ENPS1 = 0x01;
 static const uint8_t SI1145_PARAM_PSLED12SEL = 0x02;
 static const uint8_t SI1145_PARAM_PSLED12SEL_PS1LED1 = 0x01;
 static const uint8_t SI1145_PARAM_PS1ADCMUX = 0x07;
