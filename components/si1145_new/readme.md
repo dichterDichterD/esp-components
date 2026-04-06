@@ -19,7 +19,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/dichterDichterD/esp-components
-    components: [ si1145, si1145_new ]
+    components: [ si1145_new ]
 
 i2c:
   sda: GPIOXX #add your SDA
