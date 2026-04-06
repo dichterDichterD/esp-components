@@ -107,8 +107,9 @@ void SI1145SensorComponent::dump_config() {
 float SI1145SensorComponent::get_setup_priority() const { return setup_priority::DATA; }
 
 void SI1145SensorComponent::update() {
-	// Device runs in PSALS_AUTO mode after setup, so we can read the latest sample
-	// directly without blocking the main loop with an extra conversion delay.
+	// Trigger a fresh measurement cycle to avoid stale/zero frames on some boards.
+	this->write8_(SI1145_REG_COMMAND, SI1145_PSALS_FORCE);
+	delay(10);
 
 	float vis;
 	float ir;
@@ -185,7 +186,8 @@ uint16_t SI1145SensorComponent::read_visible_() {
 		vatzero = VALUE_AT_ZERO_LOW;
 	}
 	if (r <= vatzero) {
-		return 0;
+		// Keep small raw signals instead of hard-clipping everything to zero.
+		return r;
 	}
 	return r - vatzero;
 }
@@ -197,7 +199,8 @@ uint16_t SI1145SensorComponent::read_infrared_() {
 		vatzero = VALUE_AT_ZERO_LOW;
 	}
 	if (r <= vatzero) {
-		return 0;
+		// Keep small raw signals instead of hard-clipping everything to zero.
+		return r;
 	}
 	return r - vatzero;
 }
