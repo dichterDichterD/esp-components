@@ -23,11 +23,8 @@ sensor:
 
     visible:
       name: "SI1145 Visible"
-      icon: mdi:brightness-5
     infrared:
       name: "SI1145 Infrared"
-      icon: mdi:weather-night
     uv_index:
       name: "SI1145 UV Index"
-      icon: mdi:sun-wireless
 ```
