@@ -21,9 +21,10 @@ external_components:
       path: /Users/david/Documents/01_Projekte/Wetterstation/repository/esp-components/components
 
 i2c:
-  sda: GPIO21
-  scl: GPIO22
-  scan: true
+  sda: GPIOXX #add your SDA
+  scl: GPIOXX #add your SCL
+  id: bus_a #optional
+  frequency: 100khz #!! IMPORTANT - Does not work without, gets 0/Zero Readings
 
 sensor:
   - platform: si1145_new
