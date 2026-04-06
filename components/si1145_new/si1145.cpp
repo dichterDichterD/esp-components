@@ -32,10 +32,10 @@ void SI1145NewComponent::update() {
   uint16_t uv_raw = 0;
   uint8_t response = 0;
 
-  if (!this->write8_(SI1145_REG_COMMAND, SI1145_PSALS_FORCE)) {
-    ESP_LOGW(TAG, "PSALS_FORCE command failed");
+  if (!this->write8_(SI1145_REG_COMMAND, SI1145_ALS_FORCE)) {
+    ESP_LOGW(TAG, "ALS_FORCE command failed");
   }
-  delay(10);
+  delay(20);
 
   this->read8_(SI1145_REG_RESPONSE, response);
   this->read16_(SI1145_REG_ALSVISDATA0, vis);
@@ -72,17 +72,11 @@ bool SI1145NewComponent::begin_() {
   this->write8_(SI1145_REG_UCOEFF2, 0x02);
   this->write8_(SI1145_REG_UCOEFF3, 0x00);
 
-  this->write_param_(SI1145_PARAM_CHLIST, SI1145_PARAM_CHLIST_ENUV | SI1145_PARAM_CHLIST_ENALSIR |
-                                             SI1145_PARAM_CHLIST_ENALSVIS | SI1145_PARAM_CHLIST_ENPS1);
+  // ALS-only channels for UV/IR/VIS. Proximity is intentionally disabled.
+  this->write_param_(SI1145_PARAM_CHLIST,
+                     SI1145_PARAM_CHLIST_ENUV | SI1145_PARAM_CHLIST_ENALSIR | SI1145_PARAM_CHLIST_ENALSVIS);
   this->write8_(SI1145_REG_INTCFG, SI1145_REG_INTCFG_INTOE);
   this->write8_(SI1145_REG_IRQEN, SI1145_REG_IRQEN_ALSEVERYSAMPLE);
-
-  this->write8_(SI1145_REG_PSLED21, 0x03);
-  this->write_param_(SI1145_PARAM_PS1ADCMUX, SI1145_PARAM_ADCMUX_LARGEIR);
-  this->write_param_(SI1145_PARAM_PSLED12SEL, SI1145_PARAM_PSLED12SEL_PS1LED1);
-  this->write_param_(SI1145_PARAM_PSADCGAIN, 0x00);
-  this->write_param_(SI1145_PARAM_PSADCOUNTER, SI1145_PARAM_ADCCOUNTER_511CLK);
-  this->write_param_(SI1145_PARAM_PSADCMISC, SI1145_PARAM_PSADCMISC_RANGE | SI1145_PARAM_PSADCMISC_PSMODE);
 
   this->write_param_(SI1145_PARAM_ALSIRADCMUX, SI1145_PARAM_ADCMUX_SMALLIR);
   this->write_param_(SI1145_PARAM_ALSIRADCGAIN, 0x00);
@@ -94,7 +88,7 @@ bool SI1145NewComponent::begin_() {
   this->write_param_(SI1145_PARAM_ALSVISADCMISC, 0x20);
 
   this->write8_(SI1145_REG_MEASRATE0, 0xFF);
-  this->write8_(SI1145_REG_COMMAND, SI1145_PSALS_AUTO);
+  this->write8_(SI1145_REG_COMMAND, SI1145_ALS_AUTO);
 
   ESP_LOGI(TAG, "SI1145 init done");
   return true;

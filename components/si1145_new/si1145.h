@@ -11,7 +11,9 @@ namespace si1145_new {
 static const uint8_t SI1145_PARAM_SET = 0xA0;
 static const uint8_t SI1145_NOP = 0x00;
 static const uint8_t SI1145_RESET = 0x01;
+static const uint8_t SI1145_ALS_FORCE = 0x06;
 static const uint8_t SI1145_PSALS_FORCE = 0x07;
+static const uint8_t SI1145_ALS_AUTO = 0x0E;
 static const uint8_t SI1145_PSALS_AUTO = 0x0F;
 
 // Parameters
@@ -19,7 +21,6 @@ static const uint8_t SI1145_PARAM_CHLIST = 0x01;
 static const uint8_t SI1145_PARAM_CHLIST_ENUV = 0x80;
 static const uint8_t SI1145_PARAM_CHLIST_ENALSIR = 0x20;
 static const uint8_t SI1145_PARAM_CHLIST_ENALSVIS = 0x10;
-static const uint8_t SI1145_PARAM_CHLIST_ENPS1 = 0x01;
 static const uint8_t SI1145_PARAM_PSLED12SEL = 0x02;
 static const uint8_t SI1145_PARAM_PSLED12SEL_PS1LED1 = 0x01;
 static const uint8_t SI1145_PARAM_PS1ADCMUX = 0x07;
