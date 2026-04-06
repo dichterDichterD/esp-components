@@ -13,6 +13,7 @@ static const uint8_t SI1145_NOP = 0x00;
 static const uint8_t SI1145_RESET = 0x01;
 static const uint8_t SI1145_PS_FORCE = 0x05;
 static const uint8_t SI1145_ALS_FORCE = 0x06;
+static const uint8_t SI1145_PSALS_FORCE = 0x07;
 static const uint8_t SI1145_PSALS_AUTO = 0x0F;
 
 static const uint8_t SI1145_PARAM_CHLIST = 0x01;
