@@ -108,7 +108,7 @@ float SI1145SensorComponent::get_setup_priority() const { return setup_priority:
 
 void SI1145SensorComponent::update() {
 	// Trigger a fresh measurement cycle to avoid stale/zero frames on some boards.
-	this->write8_(SI1145_REG_COMMAND, SI1145_PSALS_FORCE);
+	this->write8_(SI1145_REG_COMMAND, 0x07);  // SI1145_PSALS_FORCE
 	delay(10);
 
 	float vis;
