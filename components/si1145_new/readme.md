@@ -17,8 +17,9 @@ SI1145 UV/IR/Visible sensor component for ESPHome.
 ```yaml
 external_components:
   - source:
-      type: local
-      path: /Users/david/Documents/01_Projekte/Wetterstation/repository/esp-components/components
+      type: git
+      url: https://github.com/dichterDichterD/esp-components
+    components: [ si1145, si1145_new ]
 
 i2c:
   sda: GPIOXX #add your SDA
