@@ -104,7 +104,8 @@ static const uint16_t VALUE_AT_ZERO_LOW = 270;
 
 #define OVERFLOW_VALUE 0x7FFF
 
-enum Range { RANGE_HIGH = 0x20, RANGE_LOW = 0x00 };
+enum SI1145Range : uint8_t { RANGE_HIGH = 0x20, RANGE_LOW = 0x00 };
+using Range = SI1145Range;
 
 /// This class implements support for the SI1145 i2c sensor.
 class SI1145Component : public PollingComponent, public i2c::I2CDevice {
@@ -160,10 +161,10 @@ class SI1145Component : public PollingComponent, public i2c::I2CDevice {
   void set_infrared_range_(uint8_t range);
 
   // Sensors
-  sensor::Sensor *visible_sensor_;
-  sensor::Sensor *infrared_sensor_;
-  sensor::Sensor *uvindex_sensor_;
-  sensor::Sensor *illuminance_sensor_;
+  sensor::Sensor *visible_sensor_{nullptr};
+  sensor::Sensor *infrared_sensor_{nullptr};
+  sensor::Sensor *uvindex_sensor_{nullptr};
+  sensor::Sensor *illuminance_sensor_{nullptr};
 
   // Settings
   Range visible_range_ = Range::RANGE_LOW;
