@@ -22,7 +22,6 @@ ICON_UV = "mdi:sun-wireless"
 
 AUTO_LOAD = ["sensor"]
 DEPENDENCIES = ["i2c"]
-MULTI_CONF = True
 
 si1145_sensor_ns = cg.esphome_ns.namespace("si1145_sensor")
 
@@ -35,7 +34,7 @@ RANGE_OPTIONS = {"high": SI1145Range.RANGE_HIGH, "low": SI1145Range.RANGE_LOW}
 
 MODE_OPTIONS = {"auto": True, "manual": False}
 
-CONFIG_SCHEMA = cv.All(
+CONFIG_SCHEMA = (
 	cv.Schema(
 		{
 			cv.GenerateID(): cv.declare_id(SI1145SensorComponent),
@@ -91,13 +90,7 @@ CONFIG_SCHEMA = cv.All(
 		}
 	)
 	.extend(cv.polling_component_schema("60s"))
-	.extend(i2c.i2c_device_schema(0x60)),
-	cv.has_at_least_one_key(
-		CONF_VISIBLE,
-		CONF_INFRARED,
-		CONF_UV_INDEX,
-		CONF_CALCULATED_LUX,
-	),
+	.extend(i2c.i2c_device_schema(0x60))
 )
 
 
