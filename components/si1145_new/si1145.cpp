@@ -49,7 +49,7 @@ void SI1145NewComponent::update() {
     if (!this->write8_(SI1145_REG_COMMAND, SI1145_ALS_FORCE)) {
       ESP_LOGW(TAG, "ALS_FORCE command failed");
     }
-    delay(25);
+    delay(50);
     this->read16_(SI1145_REG_ALSVISDATA0, vis_forced);
     this->read16_(SI1145_REG_ALSIRDATA0, ir_forced);
     this->read16_(SI1145_REG_UVINDEX0, uv_forced);
@@ -113,6 +113,7 @@ bool SI1145NewComponent::begin_() {
 
   this->write8_(SI1145_REG_MEASRATE0, 0xFF);
   this->write8_(SI1145_REG_COMMAND, SI1145_ALS_AUTO);
+  delay(10);
 
   uint8_t chlist = 0;
   uint8_t vis_gain = 0;
@@ -177,6 +178,7 @@ bool SI1145NewComponent::write_param_(uint8_t param, uint8_t value) {
   bool ok = true;
   ok &= this->write8_(SI1145_REG_PARAMWR, value);
   ok &= this->write8_(SI1145_REG_COMMAND, param | SI1145_PARAM_SET);
+  delay(1);
 
   uint8_t readback = 0;
   const bool rb_ok = this->read8_(SI1145_REG_PARAMRD, readback);
@@ -186,6 +188,7 @@ bool SI1145NewComponent::write_param_(uint8_t param, uint8_t value) {
 
 bool SI1145NewComponent::read_param_(uint8_t param, uint8_t &value) {
   bool ok = this->write8_(SI1145_REG_COMMAND, param | SI1145_PARAM_QUERY);
+  delay(1);
   bool rb_ok = this->read8_(SI1145_REG_PARAMRD, value);
   ESP_LOGD(TAG, "param read p=0x%02X v=0x%02X ok=%d", param, value, (ok && rb_ok) ? 1 : 0);
   return ok && rb_ok;
