@@ -176,6 +176,7 @@ void SI1145SensorComponent::update() {
 	if (this->infrared_mode_auto_) {
 		this->auto_range_infrared_(infrared_ar);
 	}
+	ESP_LOGD(TAG, "raw vis=%.1f ir=%.1f temp=%.1f resp=0x%02X", vis, ir, tp, resp);
 	this->write8_(SI1145_REG_COMMAND, SI1145_NOP);
 }
 
@@ -211,9 +212,9 @@ uint16_t SI1145SensorComponent::read_temp_() {
 	return temp;
 }
 
-uint8_t SI1145SensorComponent::read_uvindex_() {
-	int uv = this->read16_(SI1145_REG_UVINDEX0);
-	return static_cast<uint8_t>(std::floor(uv / 100.0));
+float SI1145SensorComponent::read_uvindex_() {
+	const uint16_t uv_raw = this->read16_(SI1145_REG_UVINDEX0);
+	return uv_raw / 100.0f;
 }
 
 bool SI1145SensorComponent::begin_() {

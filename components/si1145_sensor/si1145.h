@@ -100,7 +100,7 @@ class SI1145SensorComponent : public PollingComponent, public i2c::I2CDevice {
  protected:
 	uint16_t read_visible_();
 	uint16_t read_infrared_();
-	uint8_t read_uvindex_();
+	float read_uvindex_();
 	uint16_t read_temp_();
 
 	bool begin_();

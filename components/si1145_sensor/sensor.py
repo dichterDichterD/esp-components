@@ -40,7 +40,7 @@ CONFIG_SCHEMA = (
 			cv.GenerateID(): cv.declare_id(SI1145SensorComponent),
 			cv.Optional(CONF_VISIBLE): sensor.sensor_schema(
 				unit_of_measurement=UNIT_EMPTY,
-				accuracy_decimals=0,
+				accuracy_decimals=1,
 				device_class=DEVICE_CLASS_ILLUMINANCE,
 				state_class=STATE_CLASS_MEASUREMENT,
 				icon=ICON_BRIGHTNESS_5,
@@ -58,7 +58,7 @@ CONFIG_SCHEMA = (
 			),
 			cv.Optional(CONF_INFRARED): sensor.sensor_schema(
 				unit_of_measurement=UNIT_EMPTY,
-				accuracy_decimals=0,
+				accuracy_decimals=1,
 				device_class=DEVICE_CLASS_ILLUMINANCE,
 				state_class=STATE_CLASS_MEASUREMENT,
 				icon=ICON_BRIGHTNESS_5,
@@ -76,13 +76,13 @@ CONFIG_SCHEMA = (
 			),
 			cv.Optional(CONF_UV_INDEX): sensor.sensor_schema(
 				unit_of_measurement=UNIT_EMPTY,
-				accuracy_decimals=0,
+				accuracy_decimals=2,
 				state_class=STATE_CLASS_MEASUREMENT,
 				icon=ICON_UV,
 			),
 			cv.Optional(CONF_CALCULATED_LUX): sensor.sensor_schema(
 				unit_of_measurement=UNIT_LUX,
-				accuracy_decimals=0,
+				accuracy_decimals=1,
 				device_class=DEVICE_CLASS_ILLUMINANCE,
 				state_class=STATE_CLASS_MEASUREMENT,
 				icon=ICON_BRIGHTNESS_5,
